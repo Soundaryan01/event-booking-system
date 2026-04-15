@@ -1,11 +1,11 @@
 package com.eventbooking.eventbookingsystem.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -13,6 +13,15 @@ import lombok.*;
 @Builder
 public class User {
     @Id
-    @GeneratedValue
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userId;
+
+    private String name;
+
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    private String password;
+
+    private LocalDateTime createdAt;
 }

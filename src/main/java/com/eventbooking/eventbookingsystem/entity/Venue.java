@@ -1,11 +1,10 @@
 package com.eventbooking.eventbookingsystem.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "venues")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -13,6 +12,12 @@ import lombok.*;
 @Builder
 public class Venue {
     @Id
-    @GeneratedValue
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long venueId;
+
+    private String name;
+
+    private String location;
+
+    private Integer capacity;
 }
