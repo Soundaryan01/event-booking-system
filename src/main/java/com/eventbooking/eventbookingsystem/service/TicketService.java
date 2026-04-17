@@ -1,9 +1,6 @@
 package com.eventbooking.eventbookingsystem.service;
 
-import com.eventbooking.eventbookingsystem.entity.Booking;
-import com.eventbooking.eventbookingsystem.entity.Event;
-import com.eventbooking.eventbookingsystem.entity.Seat;
-import com.eventbooking.eventbookingsystem.entity.Ticket;
+import com.eventbooking.eventbookingsystem.entity.*;
 import com.eventbooking.eventbookingsystem.repository.BookingRepository;
 import com.eventbooking.eventbookingsystem.repository.EventRepository;
 import com.eventbooking.eventbookingsystem.repository.SeatRepository;
@@ -57,6 +54,10 @@ public class TicketService {
 
     public Optional<Ticket> getTicketById(Long ticketId) {
         return ticketRepository.findById(ticketId);
+    }
+
+    public List<Ticket> getTicketByUser(User user){
+        return ticketRepository.findByUser(user);
     }
 
     public List<Ticket> getTicketsByBooking(Long bookingId) {

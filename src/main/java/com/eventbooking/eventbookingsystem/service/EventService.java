@@ -22,16 +22,12 @@ public class EventService {
     }
 
     public Event createEvent(Event event, Long venueId) {
-
         Optional<Venue> venue = venueRepository.findById(venueId);
-
         if (venue.isEmpty()) {
             throw new RuntimeException("Venue not found");
         }
-
         event.setVenue(venue.get());
         event.setCreatedAt(LocalDateTime.now());
-
         return eventRepository.save(event);
     }
 
@@ -42,4 +38,39 @@ public class EventService {
     public Optional<Event> getEventById(Long eventId) {
         return eventRepository.findById(eventId);
     }
+
+    public Event updateEvent(Long eventId, Event updatedEvent) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        event.setName(updatedEvent.getName());
+        event.setDescription(updatedEvent.getDescription());
+        event.setEventDate(updatedEvent.getEventDate());
+        return eventRepository.save(event);
+    }
+
+    public void deleteEvent(Long eventId) {
+        if (!eventRepository.existsById(eventId)) {
+            throw new RuntimeException("Event not found");
+        }
+        eventRepository.deleteById(eventId);
+    }
+
+    public List<Event> getEventsByVenue(Long venueId) {
+        Venue venue = venueRepository.findById(venueId)
+                .orElseThrow(() -> new RuntimeException("Venue not found"));
+
+        return eventRepository.findAll()
+                .stream()
+                .filter(event -> event.getVenue().equals(venue))
+                .toList();
+    }
+
+    public List<Event> getUpcomingEvents() {
+        return eventRepository.findAll()
+                .stream()
+                .filter(event -> event.getEventDate().isAfter(LocalDateTime.now()))
+                .toList();
+    }
+
 }

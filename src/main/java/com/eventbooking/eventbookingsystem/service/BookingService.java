@@ -97,5 +97,4 @@ public class BookingService {
             ticketRepository.save(ticket);
         }
     }
-
 }
