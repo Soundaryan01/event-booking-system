@@ -56,6 +56,8 @@ public class TicketService {
         return ticketRepository.findById(ticketId);
     }
 
+
+
     public List<Ticket> getTicketByUser(User user){
         return ticketRepository.findByUser(user);
     }
@@ -69,7 +71,7 @@ public class TicketService {
                 .toList();
     }
 
-    public void cancelTicket(Long ticketId) {
+    public Ticket cancelTicket(Long ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
         ticket.setTicketStatus("CANCELLED");
@@ -85,6 +87,12 @@ public class TicketService {
             booking.setBookingStatus("CANCELLED");
             bookingRepository.save(booking);
         }
+        return ticket;
     }
 
+    public List<Ticket> getTicketsByEvent(Long eventId) {
+        Optional<Event> event = eventRepository.findById(eventId);
+        event.orElseThrow(() -> new RuntimeException("Event not found"));
+        return ticketRepository.findByEvent(event.get());
+    }
 }

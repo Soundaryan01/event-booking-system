@@ -51,7 +51,7 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
-    List<Booking> getAllBookings() {
+    public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
     }
 
@@ -81,7 +81,7 @@ public class BookingService {
                 .toList();
     }
 
-    public void cancelBooking(Long bookingId) {
+    public Booking cancelBooking(Long bookingId) {
 
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
@@ -96,5 +96,6 @@ public class BookingService {
             ticket.setTicketStatus("CANCELLED");
             ticketRepository.save(ticket);
         }
+        return booking;
     }
 }
