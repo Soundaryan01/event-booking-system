@@ -10,6 +10,7 @@ import com.eventbooking.eventbookingsystem.repository.SeatRepository;
 import com.eventbooking.eventbookingsystem.repository.TicketRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -49,4 +50,40 @@ public class TicketService {
 
         return ticketRepository.save(ticket);
     }
+
+    public List<Ticket> getAllTickets() {
+        return ticketRepository.findAll();
+    }
+
+    public Optional<Ticket> getTicketById(Long ticketId) {
+        return ticketRepository.findById(ticketId);
+    }
+
+    public List<Ticket> getTicketsByBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+        return ticketRepository.findAll()
+                .stream()
+                .filter(ticket -> ticket.getBooking().equals(booking))
+                .toList();
+    }
+
+    public void cancelTicket(Long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+        ticket.setTicketStatus("CANCELLED");
+        ticketRepository.save(ticket);
+        Booking booking = ticket.getBooking();
+
+        List<Ticket> tickets = ticketRepository.findByBooking(booking);
+
+        boolean allCancelled = tickets.stream()
+                .allMatch(t -> "CANCELLED".equals(t.getTicketStatus()));
+
+        if (allCancelled) {
+            booking.setBookingStatus("CANCELLED");
+            bookingRepository.save(booking);
+        }
+    }
+
 }
