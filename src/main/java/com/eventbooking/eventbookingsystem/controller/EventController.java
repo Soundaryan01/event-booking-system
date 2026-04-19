@@ -1,7 +1,10 @@
 package com.eventbooking.eventbookingsystem.controller;
 
+import com.eventbooking.eventbookingsystem.dto.EventDTO;
 import com.eventbooking.eventbookingsystem.entity.Event;
+import com.eventbooking.eventbookingsystem.mapper.EntityMapper;
 import com.eventbooking.eventbookingsystem.service.EventService;
+import com.eventbooking.eventbookingsystem.wrapper.APIResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,38 +21,100 @@ public class EventController {
     }
 
     @PostMapping("/venue/{venueId}")
-    public Event createEvent(@RequestBody Event event, @PathVariable Long venueId) {
-        return eventService.createEvent(event, venueId);
+    public APIResponse<EventDTO> createEvent(@RequestBody Event event,
+                                             @PathVariable Long venueId) {
+
+        Event savedEvent = eventService.createEvent(event, venueId);
+
+        return new APIResponse<>(
+                true,
+                "Event created successfully",
+                EntityMapper.toEventDTO(savedEvent)
+        );
     }
 
     @GetMapping
-    public List<Event> getAllEvents() {
-        return eventService.getAllEvents();
+    public APIResponse<List<EventDTO>> getAllEvents() {
+
+        List<EventDTO> events = eventService.getAllEvents()
+                .stream()
+                .map(EntityMapper::toEventDTO)
+                .toList();
+
+        return new APIResponse<>(
+                true,
+                "Events fetched successfully",
+                events
+        );
     }
 
     @GetMapping("/{eventId}")
-    public Event getEventById(@PathVariable Long eventId) {
+    public APIResponse<EventDTO> getEventById(@PathVariable Long eventId) {
+
         Optional<Event> event = eventService.getEventById(eventId);
-        return event.orElse(null);
+        if(event.isEmpty()) {
+            throw new RuntimeException("Event not found: " + eventId);
+        }
+
+        return new APIResponse<>(
+                true,
+                "Event fetched successfully",
+                EntityMapper.toEventDTO(event.get())
+        );
     }
 
     @PutMapping("/{eventId}")
-    public Event updateEvent(@PathVariable Long eventId, @RequestBody Event event) {
-        return eventService.updateEvent(eventId, event);
+    public APIResponse<EventDTO> updateEvent(@PathVariable Long eventId,
+                                             @RequestBody Event event) {
+
+        Event updatedEvent = eventService.updateEvent(eventId, event);
+
+        return new APIResponse<>(
+                true,
+                "Event updated successfully",
+                EntityMapper.toEventDTO(updatedEvent)
+        );
     }
 
     @DeleteMapping("/{eventId}")
-    public void deleteEvent(@PathVariable Long eventId) {
+    public APIResponse<Void> deleteEvent(@PathVariable Long eventId) {
+
         eventService.deleteEvent(eventId);
+
+        return new APIResponse<>(
+                true,
+                "Event deleted successfully",
+                null
+        );
     }
 
     @GetMapping("/venue/{venueId}")
-    public List<Event> getEventsByVenue(@PathVariable Long venueId) {
-        return eventService.getEventsByVenue(venueId);
+    public APIResponse<List<EventDTO>> getEventsByVenue(@PathVariable Long venueId) {
+
+        List<EventDTO> events = eventService.getEventsByVenue(venueId)
+                .stream()
+                .map(EntityMapper::toEventDTO)
+                .toList();
+
+        return new APIResponse<>(
+                true,
+                "Events fetched for venue",
+                events
+        );
     }
 
     @GetMapping("/upcoming")
-    public List<Event> getUpcomingEvents() {
-        return eventService.getUpcomingEvents();
+    public APIResponse<List<EventDTO>> getUpcomingEvents() {
+
+        List<EventDTO> events = eventService.getUpcomingEvents()
+                .stream()
+                .map(EntityMapper::toEventDTO)
+                .toList();
+
+        return new APIResponse<>(
+                true,
+                "Upcoming events fetched",
+                events
+        );
     }
 }

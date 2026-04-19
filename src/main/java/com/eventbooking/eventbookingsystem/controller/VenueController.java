@@ -1,7 +1,10 @@
 package com.eventbooking.eventbookingsystem.controller;
 
+import com.eventbooking.eventbookingsystem.dto.VenueDTO;
 import com.eventbooking.eventbookingsystem.entity.Venue;
+import com.eventbooking.eventbookingsystem.mapper.EntityMapper;
 import com.eventbooking.eventbookingsystem.service.VenueService;
+import com.eventbooking.eventbookingsystem.wrapper.APIResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,33 +21,80 @@ public class VenueController {
     }
 
     @PostMapping
-    public Venue createVenue(@RequestBody Venue venue) {
-        return venueService.createVenue(venue);
+    public APIResponse<VenueDTO> createVenue(@RequestBody Venue venue) {
+
+        Venue saved = venueService.createVenue(venue);
+
+        return new APIResponse<>(
+                true,
+                "Venue created successfully",
+                EntityMapper.toVenueDTO(saved)
+        );
     }
 
     @GetMapping
-    public List<Venue> getAllVenues() {
-        return venueService.getAllVenues();
+    public APIResponse<List<VenueDTO>> getAllVenues() {
+
+        List<VenueDTO> venues = venueService.getAllVenues()
+                .stream()
+                .map(EntityMapper::toVenueDTO)
+                .toList();
+
+        return new APIResponse<>(
+                true,
+                "Venues fetched successfully",
+                venues
+        );
     }
 
     @GetMapping("/{id}")
-    public Venue getVenueById(@PathVariable Long id) {
+    public APIResponse<VenueDTO> getVenueById(@PathVariable Long id) {
+
         Optional<Venue> venue = venueService.getVenueById(id);
-        return venue.orElse(null);
+        if(venue.isEmpty()){
+            throw new RuntimeException("Venue not found: " + id );
+        }
+
+        return new APIResponse<>(
+                true,
+                "Venue fetched successfully",
+                EntityMapper.toVenueDTO(venue.get())
+        );
     }
 
     @GetMapping("/event/{eventId}")
-    public Venue getVenueByEvent(@PathVariable Long eventId) {
-        return venueService.getVenueByEvent(eventId);
+    public APIResponse<VenueDTO> getVenueByEvent(@PathVariable Long eventId) {
+
+        Venue venue = venueService.getVenueByEvent(eventId);
+
+        return new APIResponse<>(
+                true,
+                "Venue fetched by event",
+                EntityMapper.toVenueDTO(venue)
+        );
     }
 
     @GetMapping("/booking/{bookingId}")
-    public Venue getVenueByBooking(@PathVariable Long bookingId) {
-        return venueService.getVenueByBooking(bookingId);
+    public APIResponse<VenueDTO> getVenueByBooking(@PathVariable Long bookingId) {
+
+        Venue venue = venueService.getVenueByBooking(bookingId);
+
+        return new APIResponse<>(
+                true,
+                "Venue fetched by booking",
+                EntityMapper.toVenueDTO(venue)
+        );
     }
 
     @GetMapping("/ticket/{ticketId}")
-    public Venue getVenueByTicket(@PathVariable Long ticketId) {
-        return venueService.getVenueByTicket(ticketId);
+    public APIResponse<VenueDTO> getVenueByTicket(@PathVariable Long ticketId) {
+
+        Venue venue = venueService.getVenueByTicket(ticketId);
+
+        return new APIResponse<>(
+                true,
+                "Venue fetched by ticket",
+                EntityMapper.toVenueDTO(venue)
+        );
     }
 }
