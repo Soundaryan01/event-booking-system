@@ -46,7 +46,7 @@ public class VenueService {
     public Venue getVenueByEvent(Long eventId) {
 
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
+                .orElseThrow(() -> new RuntimeException("Event not found: "+eventId));
 
         return event.getVenue();
     }
@@ -54,7 +54,7 @@ public class VenueService {
     public Venue getVenueByBooking(Long bookingId) {
 
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
+                .orElseThrow(() -> new RuntimeException("Booking not found: "+bookingId));
 
         return booking.getEvent().getVenue();
     }
@@ -62,7 +62,7 @@ public class VenueService {
     public Venue getVenueByTicket(Long ticketId) {
 
         Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+                .orElseThrow(() -> new RuntimeException("Ticket not found: "+ticketId));
 
         return ticket.getEvent().getVenue();
     }

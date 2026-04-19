@@ -39,8 +39,10 @@ public class BookingService {
         Optional<User> user = userRepository.findById(userId);
         Optional<Event> event = eventRepository.findById(eventId);
 
-        if (user.isEmpty() || event.isEmpty()) {
-            throw new RuntimeException("User or Event not found");
+        if (user.isEmpty()) {
+            throw new RuntimeException("User not found: "+userId);
+        }else if(event.isEmpty()){
+            throw new RuntimeException("Event not found: "+eventId);
         }
 
         Booking booking = Booking.builder()
@@ -64,7 +66,7 @@ public class BookingService {
     public List<Booking> getBookingsByUser(Long userId) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found: "+userId));
 
         return bookingRepository.findAll()
                 .stream()
@@ -75,7 +77,7 @@ public class BookingService {
     public List<Booking> getBookingsByEvent(Long eventId) {
 
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
+                .orElseThrow(() -> new RuntimeException("Event not found:" + eventId ));
 
         return bookingRepository.findAll()
                 .stream()
@@ -86,7 +88,7 @@ public class BookingService {
     public Booking cancelBooking(Long bookingId) {
 
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
+                .orElseThrow(() -> new RuntimeException("Booking not found : "+bookingId));
 
         booking.setStatus(BookingStatus.CANCELLED);
 

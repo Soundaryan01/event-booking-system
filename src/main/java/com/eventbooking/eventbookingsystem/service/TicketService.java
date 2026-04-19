@@ -36,15 +36,17 @@ public class TicketService {
         Optional<Booking> booking = bookingRepository.findById(bookingId);
         Optional<Seat> seat = seatRepository.findById(seatId);
         if(seat.isEmpty()){
-            throw new RuntimeException("Seat not found");
+            throw new RuntimeException("Seat not found: "+seatId);
         }
         seat.get().setStatus(SeatStatus.BOOKED);
         seatRepository.save(seat.get());
 
         Optional<Event> event = eventRepository.findById(eventId);
 
-        if (booking.isEmpty() || event.isEmpty()) {
-            throw new RuntimeException("Booking, Seat, or Event not found");
+        if (booking.isEmpty()) {
+            throw new RuntimeException("Booking not found: "+bookingId);
+        }else if(event.isEmpty()){
+            throw new RuntimeException("Event not found: "+eventId);
         }
 
 
@@ -75,7 +77,7 @@ public class TicketService {
 
     public List<Ticket> getTicketsByBooking(Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
+                .orElseThrow(() -> new RuntimeException("Booking not found: "+bookingId));
         return ticketRepository.findAll()
                 .stream()
                 .filter(ticket -> ticket.getBooking().equals(booking))
@@ -84,7 +86,7 @@ public class TicketService {
 
     public Ticket cancelTicket(Long ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+                .orElseThrow(() -> new RuntimeException("Ticket not found: "+ticketId));
         ticket.setStatus(TicketStatus.CANCELLED);
         ticketRepository.save(ticket);
 
@@ -108,7 +110,7 @@ public class TicketService {
 
     public List<Ticket> getTicketsByEvent(Long eventId) {
         Optional<Event> event = eventRepository.findById(eventId);
-        event.orElseThrow(() -> new RuntimeException("Event not found"));
+        event.orElseThrow(() -> new RuntimeException("Event not found: "+eventId));
         return ticketRepository.findByEvent(event.get());
     }
 }

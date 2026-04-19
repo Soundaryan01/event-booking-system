@@ -36,7 +36,7 @@ public class SeatService {
         Optional<Venue> venue = venueRepository.findById(venueId);
 
         if (venue.isEmpty()) {
-            throw new RuntimeException("Venue not found");
+            throw new RuntimeException("Venue not found: "+venueId);
         }
 
         seat.setVenue(venue.get());
@@ -55,7 +55,7 @@ public class SeatService {
     public List<Seat> getSeatsByVenue(Long venueId) {
 
         Venue venue = venueRepository.findById(venueId)
-                .orElseThrow(() -> new RuntimeException("Venue not found"));
+                .orElseThrow(() -> new RuntimeException("Venue not found: "+venueId));
 
         return seatRepository.findAll()
                 .stream()
@@ -66,7 +66,7 @@ public class SeatService {
     public List<Seat> getSeatsByEvent(Long eventId) {
 
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
+                .orElseThrow(() -> new RuntimeException("Event not found: "+eventId));
 
         Venue venue = event.getVenue();
 
