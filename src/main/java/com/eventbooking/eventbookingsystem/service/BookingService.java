@@ -4,6 +4,8 @@ import com.eventbooking.eventbookingsystem.entity.Booking;
 import com.eventbooking.eventbookingsystem.entity.Event;
 import com.eventbooking.eventbookingsystem.entity.Ticket;
 import com.eventbooking.eventbookingsystem.entity.User;
+import com.eventbooking.eventbookingsystem.enums.BookingStatus;
+import com.eventbooking.eventbookingsystem.enums.TicketStatus;
 import com.eventbooking.eventbookingsystem.repository.BookingRepository;
 import com.eventbooking.eventbookingsystem.repository.EventRepository;
 import com.eventbooking.eventbookingsystem.repository.TicketRepository;
@@ -44,8 +46,8 @@ public class BookingService {
         Booking booking = Booking.builder()
                 .user(user.get())
                 .event(event.get())
-                .bookingStatus("CONFIRMED")
                 .bookingTime(LocalDateTime.now())
+                .status(BookingStatus.CONFIRMED)
                 .build();
 
         return bookingRepository.save(booking);
@@ -86,14 +88,14 @@ public class BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
 
-        booking.setBookingStatus("CANCELLED");
+        booking.setStatus(BookingStatus.CANCELLED);
 
         bookingRepository.save(booking);
 
         List<Ticket> tickets = ticketRepository.findByBooking(booking);
 
         for (Ticket ticket : tickets) {
-            ticket.setTicketStatus("CANCELLED");
+            ticket.setStatus(TicketStatus.CANCELLED);
             ticketRepository.save(ticket);
         }
         return booking;

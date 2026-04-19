@@ -1,5 +1,6 @@
 package com.eventbooking.eventbookingsystem.entity;
 
+import com.eventbooking.eventbookingsystem.enums.TicketStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,8 +17,6 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ticketId;
 
-    private String ticketStatus;
-
     @ManyToOne
     @JoinColumn(name = "booking_id")
     private Booking booking;
@@ -29,4 +28,7 @@ public class Ticket {
     @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;
+
+    @Enumerated(EnumType.STRING)
+    private TicketStatus status;
 }

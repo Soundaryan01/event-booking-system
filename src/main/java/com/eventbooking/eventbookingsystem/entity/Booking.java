@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import com.eventbooking.eventbookingsystem.enums.BookingStatus;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 @Entity
 @Table(name = "bookings")
@@ -20,8 +23,6 @@ public class Booking {
 
     private LocalDateTime bookingTime;
 
-    private String bookingStatus;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -29,4 +30,7 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;
+
+    @Enumerated(EnumType.STRING)
+    private BookingStatus status;
 }

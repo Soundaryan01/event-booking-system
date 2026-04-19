@@ -1,6 +1,9 @@
 package com.eventbooking.eventbookingsystem.service;
 
 import com.eventbooking.eventbookingsystem.entity.*;
+import com.eventbooking.eventbookingsystem.enums.BookingStatus;
+import com.eventbooking.eventbookingsystem.enums.SeatStatus;
+import com.eventbooking.eventbookingsystem.enums.TicketStatus;
 import com.eventbooking.eventbookingsystem.repository.BookingRepository;
 import com.eventbooking.eventbookingsystem.repository.EventRepository;
 import com.eventbooking.eventbookingsystem.repository.SeatRepository;
@@ -32,17 +35,25 @@ public class TicketService {
 
         Optional<Booking> booking = bookingRepository.findById(bookingId);
         Optional<Seat> seat = seatRepository.findById(seatId);
+        if(seat.isEmpty()){
+            throw new RuntimeException("Seat not found");
+        }
+        seat.get().setStatus(SeatStatus.BOOKED);
+        seatRepository.save(seat.get());
+
         Optional<Event> event = eventRepository.findById(eventId);
 
-        if (booking.isEmpty() || seat.isEmpty() || event.isEmpty()) {
+        if (booking.isEmpty() || event.isEmpty()) {
             throw new RuntimeException("Booking, Seat, or Event not found");
         }
+
+
 
         Ticket ticket = Ticket.builder()
                 .booking(booking.get())
                 .seat(seat.get())
                 .event(event.get())
-                .ticketStatus("CONFIRMED")
+                .status(TicketStatus.ACTIVE)
                 .build();
 
         return ticketRepository.save(ticket);
@@ -74,17 +85,22 @@ public class TicketService {
     public Ticket cancelTicket(Long ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
-        ticket.setTicketStatus("CANCELLED");
+        ticket.setStatus(TicketStatus.CANCELLED);
         ticketRepository.save(ticket);
+
+        Seat seat = ticket.getSeat();
+        seat.setStatus(SeatStatus.AVAILABLE);
+        seatRepository.save(seat);
+
         Booking booking = ticket.getBooking();
 
         List<Ticket> tickets = ticketRepository.findByBooking(booking);
 
         boolean allCancelled = tickets.stream()
-                .allMatch(t -> "CANCELLED".equals(t.getTicketStatus()));
+                .allMatch(t -> TicketStatus.CANCELLED.equals(t.getStatus()));
 
         if (allCancelled) {
-            booking.setBookingStatus("CANCELLED");
+            booking.setStatus(BookingStatus.CANCELLED);
             bookingRepository.save(booking);
         }
         return ticket;

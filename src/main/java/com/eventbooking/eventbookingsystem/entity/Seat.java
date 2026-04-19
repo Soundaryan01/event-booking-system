@@ -1,4 +1,5 @@
 package com.eventbooking.eventbookingsystem.entity;
+import com.eventbooking.eventbookingsystem.enums.SeatStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,4 +23,7 @@ public class Seat {
     @ManyToOne
     @JoinColumn(name = "venue_id")
     private Venue venue;
+
+    @Enumerated(EnumType.STRING)
+    private SeatStatus status;
 }

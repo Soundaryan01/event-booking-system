@@ -4,6 +4,8 @@ import com.eventbooking.eventbookingsystem.entity.Event;
 import com.eventbooking.eventbookingsystem.entity.Seat;
 import com.eventbooking.eventbookingsystem.entity.Ticket;
 import com.eventbooking.eventbookingsystem.entity.Venue;
+import com.eventbooking.eventbookingsystem.enums.SeatStatus;
+import com.eventbooking.eventbookingsystem.enums.TicketStatus;
 import com.eventbooking.eventbookingsystem.repository.EventRepository;
 import com.eventbooking.eventbookingsystem.repository.SeatRepository;
 import com.eventbooking.eventbookingsystem.repository.TicketRepository;
@@ -75,24 +77,7 @@ public class SeatService {
     }
 
     public List<Seat> getAvailableSeatsByEvent(Long eventId) {
-
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
-
-        List<Ticket> bookedTickets = ticketRepository.findAll()
-                .stream()
-                .filter(ticket -> ticket.getEvent().equals(event)
-                        && !"CANCELLED".equals(ticket.getTicketStatus()))
-                .toList();
-
-        List<Seat> bookedSeats = bookedTickets.stream()
-                .map(Ticket::getSeat)
-                .toList();
-
-        return getSeatsByEvent(eventId)
-                .stream()
-                .filter(seat -> !bookedSeats.contains(seat))
-                .toList();
+        return seatRepository.findByEventAndStatus(eventRepository.getById(eventId), SeatStatus.AVAILABLE);
     }
 
 }
