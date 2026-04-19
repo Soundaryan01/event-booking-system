@@ -1,7 +1,10 @@
 package com.eventbooking.eventbookingsystem.controller;
 
+import com.eventbooking.eventbookingsystem.dto.UserDTO;
 import com.eventbooking.eventbookingsystem.entity.User;
+import com.eventbooking.eventbookingsystem.mapper.EntityMapper;
 import com.eventbooking.eventbookingsystem.service.UserService;
+import com.eventbooking.eventbookingsystem.wrapper.APIResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,27 +21,66 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
+    public APIResponse<UserDTO> createUser(@RequestBody User user) {
+        User saved =  userService.createUser(user);
+        return new APIResponse<>(
+                true,
+                "User created",
+                EntityMapper.toUserDTO(saved)
+        );
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public APIResponse<List<UserDTO>> getAllUsers() {
+        List<UserDTO> users = userService.getAllUsers()
+                .stream()
+                .map(EntityMapper::toUserDTO)
+                .toList();
+
+        return new APIResponse<>(
+                true,
+                "Users fetched",
+                users
+        );
+
     }
 
     @GetMapping("/{id}")
-    public Optional<User> getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+    public APIResponse<UserDTO> getUserById(@PathVariable Long id) {
+
+        Optional<User> user = userService.getUserById(id);
+        if(user.isEmpty()){
+            throw new RuntimeException("User not found: "+id);
+        }
+
+        return new APIResponse<>(
+                true,
+                "User fetched",
+                EntityMapper.toUserDTO(user.get())
+        );
     }
 
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable Long id, @RequestBody User user) {
-        return userService.updateUser(id, user);
+    public APIResponse<UserDTO> updateUser(@PathVariable Long id, @RequestBody User user) {
+
+        User updatedUser = userService.updateUser(id, user);
+
+        return new APIResponse<>(
+                true,
+                "User updated successfully",
+                EntityMapper.toUserDTO(updatedUser)
+        );
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
+    public APIResponse<Void> deleteUser(@PathVariable Long id) {
+
         userService.deleteUser(id);
+
+        return new APIResponse<>(
+                true,
+                "User deleted successfully",
+                null
+        );
     }
 }
