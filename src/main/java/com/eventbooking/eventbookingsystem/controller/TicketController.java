@@ -1,9 +1,12 @@
 package com.eventbooking.eventbookingsystem.controller;
 
+import com.eventbooking.eventbookingsystem.dto.TicketDTO;
 import com.eventbooking.eventbookingsystem.entity.Booking;
 import com.eventbooking.eventbookingsystem.entity.Ticket;
+import com.eventbooking.eventbookingsystem.mapper.EntityMapper;
 import com.eventbooking.eventbookingsystem.service.BookingService;
 import com.eventbooking.eventbookingsystem.service.TicketService;
+import com.eventbooking.eventbookingsystem.wrapper.APIResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,46 +17,78 @@ import java.util.Optional;
 public class TicketController {
 
     private final TicketService ticketService;
-    private final BookingService bookingService;
 
-    public TicketController(TicketService ticketService,  BookingService bookingService) {
+    public TicketController(TicketService ticketService) {
         this.ticketService = ticketService;
-        this.bookingService = bookingService;
     }
 
     @PostMapping("/booking/{bookingId}/seat/{seatId}")
-    public Ticket createTicket(@PathVariable Long bookingId, @PathVariable Long seatId) {
-        Optional<Booking> booking = bookingService.getBookingById(bookingId);
-        if(booking.isPresent()) {
-            return ticketService.createTicket(bookingId, seatId, booking.get().getEvent().getEventId());
-        }else{
-            throw new RuntimeException("Invalid booking id");
-        }
+    public APIResponse<TicketDTO> createTicket(@PathVariable Long bookingId,
+                                               @PathVariable Long seatId) {
+
+        Ticket ticket = ticketService.createTicket(bookingId, seatId);
+
+        return new APIResponse<>(
+                true,
+                "Ticket created successfully",
+                EntityMapper.toTicketDTO(ticket)
+        );
     }
 
     @GetMapping
-    public List<Ticket> getAllTickets() {
-        return ticketService.getAllTickets();
+    public APIResponse<List<TicketDTO>> getAllTickets() {
+
+        List<TicketDTO> tickets = ticketService.getAllTickets()
+                .stream()
+                .map(EntityMapper::toTicketDTO)
+                .toList();
+
+        return new APIResponse<>(
+                true,
+                "Tickets fetched successfully",
+                tickets
+        );
     }
 
     @GetMapping("/{ticketId}")
-    public Ticket getTicketById(@PathVariable Long ticketId) {
-        Optional<Ticket> ticket =  ticketService.getTicketById(ticketId);
-        return ticket.orElse(null);
+    public APIResponse<TicketDTO> getTicketById(@PathVariable Long ticketId) {
+
+        Optional<Ticket> ticket = ticketService.getTicketById(ticketId);
+        if(ticket.isEmpty()){
+            throw new RuntimeException("Ticket not found: "+ticketId);
+        }
+
+        return new APIResponse<>(
+                true,
+                "Ticket fetched successfully",
+                EntityMapper.toTicketDTO(ticket.get())
+        );
     }
 
     @GetMapping("/booking/{bookingId}")
-    public List<Ticket> getTicketsByBooking(@PathVariable Long bookingId) {
-        return ticketService.getTicketsByBooking(bookingId);
-    }
+    public APIResponse<List<TicketDTO>> getTicketsByBooking(@PathVariable Long bookingId) {
 
-    @GetMapping("/event/{eventId}")
-    public List<Ticket> getTicketsByEvent(@PathVariable Long eventId) {
-        return ticketService.getTicketsByEvent(eventId);
+        List<TicketDTO> tickets = ticketService.getTicketsByBooking(bookingId)
+                .stream()
+                .map(EntityMapper::toTicketDTO)
+                .toList();
+
+        return new APIResponse<>(
+                true,
+                "Tickets fetched by booking",
+                tickets
+        );
     }
 
     @PutMapping("/{ticketId}/cancel")
-    public Ticket cancelTicket(@PathVariable Long ticketId) {
-        return ticketService.cancelTicket(ticketId);
+    public APIResponse<TicketDTO> cancelTicket(@PathVariable Long ticketId) {
+
+        Ticket ticket = ticketService.cancelTicket(ticketId);
+
+        return new APIResponse<>(
+                true,
+                "Ticket cancelled successfully",
+                EntityMapper.toTicketDTO(ticket)
+        );
     }
 }

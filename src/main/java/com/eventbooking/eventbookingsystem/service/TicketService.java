@@ -31,7 +31,7 @@ public class TicketService {
         this.eventRepository = eventRepository;
     }
 
-    public Ticket createTicket(Long bookingId, Long seatId, Long eventId) {
+    public Ticket createTicket(Long bookingId, Long seatId) {
 
         Optional<Booking> booking = bookingRepository.findById(bookingId);
         Optional<Seat> seat = seatRepository.findById(seatId);
@@ -41,20 +41,16 @@ public class TicketService {
         seat.get().setStatus(SeatStatus.BOOKED);
         seatRepository.save(seat.get());
 
-        Optional<Event> event = eventRepository.findById(eventId);
-
         if (booking.isEmpty()) {
             throw new RuntimeException("Booking not found: "+bookingId);
-        }else if(event.isEmpty()){
-            throw new RuntimeException("Event not found: "+eventId);
         }
 
-
+        Event event = booking.get().getEvent();
 
         Ticket ticket = Ticket.builder()
                 .booking(booking.get())
                 .seat(seat.get())
-                .event(event.get())
+                .event(event)
                 .status(TicketStatus.ACTIVE)
                 .build();
 

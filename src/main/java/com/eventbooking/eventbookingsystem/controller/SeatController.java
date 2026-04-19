@@ -1,7 +1,10 @@
 package com.eventbooking.eventbookingsystem.controller;
 
+import com.eventbooking.eventbookingsystem.dto.SeatDTO;
 import com.eventbooking.eventbookingsystem.entity.Seat;
+import com.eventbooking.eventbookingsystem.mapper.EntityMapper;
 import com.eventbooking.eventbookingsystem.service.SeatService;
+import com.eventbooking.eventbookingsystem.wrapper.APIResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,22 +20,60 @@ public class SeatController {
     }
 
     @PostMapping("/venue/{venueId}")
-    public Seat createSeat(@RequestBody Seat seat, @PathVariable Long venueId) {
-        return seatService.createSeat(seat, venueId);
+    public APIResponse<SeatDTO> createSeat(@RequestBody Seat seat,
+                                           @PathVariable Long venueId) {
+
+        Seat created = seatService.createSeat(seat, venueId);
+
+        return new APIResponse<>(
+                true,
+                "Seat created successfully",
+                EntityMapper.toSeatDTO(created)
+        );
     }
 
     @GetMapping("/venue/{venueId}")
-    public List<Seat> getSeatsByVenue(@PathVariable Long venueId) {
-        return seatService.getSeatsByVenue(venueId);
+    public APIResponse<List<SeatDTO>> getSeatsByVenue(@PathVariable Long venueId) {
+
+        List<SeatDTO> seats = seatService.getSeatsByVenue(venueId)
+                .stream()
+                .map(EntityMapper::toSeatDTO)
+                .toList();
+
+        return new APIResponse<>(
+                true,
+                "Seats fetched by venue",
+                seats
+        );
     }
 
     @GetMapping("/event/{eventId}")
-    public List<Seat> getSeatsByEvent(@PathVariable Long eventId) {
-        return seatService.getSeatsByEvent(eventId);
+    public APIResponse<List<SeatDTO>> getSeatsByEvent(@PathVariable Long eventId) {
+
+        List<SeatDTO> seats = seatService.getSeatsByEvent(eventId)
+                .stream()
+                .map(EntityMapper::toSeatDTO)
+                .toList();
+
+        return new APIResponse<>(
+                true,
+                "Seats fetched by event",
+                seats
+        );
     }
 
     @GetMapping("/event/{eventId}/available")
-    public List<Seat> getAvailableSeatsByEvent(@PathVariable Long eventId) {
-        return seatService.getAvailableSeatsByEvent(eventId);
+    public APIResponse<List<SeatDTO>> getAvailableSeatsByEvent(@PathVariable Long eventId) {
+
+        List<SeatDTO> seats = seatService.getAvailableSeatsByEvent(eventId)
+                .stream()
+                .map(EntityMapper::toSeatDTO)
+                .toList();
+
+        return new APIResponse<>(
+                true,
+                "Available seats fetched",
+                seats
+        );
     }
 }
