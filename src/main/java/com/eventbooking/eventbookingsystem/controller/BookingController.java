@@ -1,10 +1,12 @@
 package com.eventbooking.eventbookingsystem.controller;
 
-import com.eventbooking.eventbookingsystem.dto.BookingDTO;
+import com.eventbooking.eventbookingsystem.dto.request.CreateBookingRequest;
+import com.eventbooking.eventbookingsystem.dto.response.BookingDTO;
 import com.eventbooking.eventbookingsystem.entity.Booking;
 import com.eventbooking.eventbookingsystem.mapper.EntityMapper;
 import com.eventbooking.eventbookingsystem.service.BookingService;
 import com.eventbooking.eventbookingsystem.wrapper.APIResponse;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,11 +22,13 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-    @PostMapping("/user/{userId}/event/{eventId}")
-    public APIResponse<BookingDTO> createBooking(@PathVariable Long userId,
-                                                 @PathVariable Long eventId) {
+    @PostMapping
+    public APIResponse<BookingDTO> createBooking(@Valid @RequestBody CreateBookingRequest request) {
 
-        Booking booking = bookingService.createBooking(userId, eventId);
+        Booking booking = bookingService.createBooking(
+                request.getUserId(),
+                request.getEventId()
+        );
 
         return new APIResponse<>(
                 true,

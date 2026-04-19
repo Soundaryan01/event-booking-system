@@ -1,6 +1,6 @@
 package com.eventbooking.eventbookingsystem.controller;
 
-import com.eventbooking.eventbookingsystem.dto.VenueDTO;
+import com.eventbooking.eventbookingsystem.dto.response.VenueDTO;
 import com.eventbooking.eventbookingsystem.entity.Venue;
 import com.eventbooking.eventbookingsystem.mapper.EntityMapper;
 import com.eventbooking.eventbookingsystem.service.VenueService;

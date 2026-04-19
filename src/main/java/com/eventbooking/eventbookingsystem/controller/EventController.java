@@ -1,10 +1,12 @@
 package com.eventbooking.eventbookingsystem.controller;
 
-import com.eventbooking.eventbookingsystem.dto.EventDTO;
+import com.eventbooking.eventbookingsystem.dto.request.CreateEventRequest;
+import com.eventbooking.eventbookingsystem.dto.response.EventDTO;
 import com.eventbooking.eventbookingsystem.entity.Event;
 import com.eventbooking.eventbookingsystem.mapper.EntityMapper;
 import com.eventbooking.eventbookingsystem.service.EventService;
 import com.eventbooking.eventbookingsystem.wrapper.APIResponse;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,16 +22,19 @@ public class EventController {
         this.eventService = eventService;
     }
 
-    @PostMapping("/venue/{venueId}")
-    public APIResponse<EventDTO> createEvent(@RequestBody Event event,
-                                             @PathVariable Long venueId) {
+    @PostMapping
+    public APIResponse<EventDTO> createEvent(@Valid @RequestBody CreateEventRequest request) {
 
-        Event savedEvent = eventService.createEvent(event, venueId);
+        Event event = eventService.createEvent(
+                request.getName(),
+                request.getEventDate(),
+                request.getVenueId()
+        );
 
         return new APIResponse<>(
                 true,
                 "Event created successfully",
-                EntityMapper.toEventDTO(savedEvent)
+                EntityMapper.toEventDTO(event)
         );
     }
 

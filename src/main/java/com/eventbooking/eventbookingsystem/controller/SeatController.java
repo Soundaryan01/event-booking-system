@@ -1,10 +1,12 @@
 package com.eventbooking.eventbookingsystem.controller;
 
-import com.eventbooking.eventbookingsystem.dto.SeatDTO;
+import com.eventbooking.eventbookingsystem.dto.request.CreateSeatRequest;
+import com.eventbooking.eventbookingsystem.dto.response.SeatDTO;
 import com.eventbooking.eventbookingsystem.entity.Seat;
 import com.eventbooking.eventbookingsystem.mapper.EntityMapper;
 import com.eventbooking.eventbookingsystem.service.SeatService;
 import com.eventbooking.eventbookingsystem.wrapper.APIResponse;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,16 +21,18 @@ public class SeatController {
         this.seatService = seatService;
     }
 
-    @PostMapping("/venue/{venueId}")
-    public APIResponse<SeatDTO> createSeat(@RequestBody Seat seat,
-                                           @PathVariable Long venueId) {
+    @PostMapping
+    public APIResponse<SeatDTO> createSeat(@Valid @RequestBody CreateSeatRequest request) {
 
-        Seat created = seatService.createSeat(seat, venueId);
+        Seat seat = seatService.createSeat(
+                request.getSeatNumber(),
+                request.getVenueId()
+        );
 
         return new APIResponse<>(
                 true,
                 "Seat created successfully",
-                EntityMapper.toSeatDTO(created)
+                EntityMapper.toSeatDTO(seat)
         );
     }
 

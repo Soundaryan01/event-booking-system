@@ -21,13 +21,20 @@ public class EventService {
         this.venueRepository = venueRepository;
     }
 
-    public Event createEvent(Event event, Long venueId) {
+    public Event createEvent(String name, LocalDateTime eventDate, Long venueId) {
+
         Optional<Venue> venue = venueRepository.findById(venueId);
+
         if (venue.isEmpty()) {
-            throw new RuntimeException("Venue not found: "+venueId);
+            throw new RuntimeException("Venue not found: " + venueId);
         }
+
+        Event event = new Event();
+        event.setName(name);
+        event.setEventDate(eventDate);
         event.setVenue(venue.get());
         event.setCreatedAt(LocalDateTime.now());
+
         return eventRepository.save(event);
     }
 

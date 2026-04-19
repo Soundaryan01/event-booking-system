@@ -1,10 +1,12 @@
 package com.eventbooking.eventbookingsystem.controller;
 
-import com.eventbooking.eventbookingsystem.dto.UserDTO;
+import com.eventbooking.eventbookingsystem.dto.request.CreateUserRequest;
+import com.eventbooking.eventbookingsystem.dto.response.UserDTO;
 import com.eventbooking.eventbookingsystem.entity.User;
 import com.eventbooking.eventbookingsystem.mapper.EntityMapper;
 import com.eventbooking.eventbookingsystem.service.UserService;
 import com.eventbooking.eventbookingsystem.wrapper.APIResponse;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,12 +23,14 @@ public class UserController {
     }
 
     @PostMapping
-    public APIResponse<UserDTO> createUser(@RequestBody User user) {
-        User saved =  userService.createUser(user);
+    public APIResponse<UserDTO> createUser(@Valid @RequestBody CreateUserRequest request) {
+
+        User createdUser = userService.createUser(request.getName(), request.getEmail());
+
         return new APIResponse<>(
                 true,
-                "User created",
-                EntityMapper.toUserDTO(saved)
+                "User created successfully",
+                EntityMapper.toUserDTO(createdUser)
         );
     }
 

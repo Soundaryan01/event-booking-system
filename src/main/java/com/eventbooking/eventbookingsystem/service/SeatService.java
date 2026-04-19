@@ -31,14 +31,16 @@ public class SeatService {
         this.eventRepository = eventRepository;
     }
 
-    public Seat createSeat(Seat seat, Long venueId) {
+    public Seat createSeat(String seatNumber, Long venueId) {
 
         Optional<Venue> venue = venueRepository.findById(venueId);
 
         if (venue.isEmpty()) {
-            throw new RuntimeException("Venue not found: "+venueId);
+            throw new RuntimeException("Venue not found: " + venueId);
         }
 
+        Seat seat = new Seat();
+        seat.setSeatNumber(seatNumber);
         seat.setVenue(venue.get());
 
         return seatRepository.save(seat);

@@ -1,6 +1,6 @@
 package com.eventbooking.eventbookingsystem.mapper;
 
-import com.eventbooking.eventbookingsystem.dto.*;
+import com.eventbooking.eventbookingsystem.dto.response.*;
 import com.eventbooking.eventbookingsystem.entity.*;
 
 public class EntityMapper {

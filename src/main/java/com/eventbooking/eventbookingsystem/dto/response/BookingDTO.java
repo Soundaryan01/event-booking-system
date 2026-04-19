@@ -1,4 +1,4 @@
-package com.eventbooking.eventbookingsystem.dto;
+package com.eventbooking.eventbookingsystem.dto.response;
 
 import com.eventbooking.eventbookingsystem.enums.BookingStatus;
 
