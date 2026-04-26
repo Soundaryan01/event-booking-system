@@ -46,6 +46,20 @@ public class SeatService {
         return seatRepository.save(seat);
     }
 
+    public Seat lockSeat(Long seatId) {
+
+        Seat seat = seatRepository.findById(seatId)
+                .orElseThrow(() -> new RuntimeException("Seat not found"));
+
+        if (seat.getStatus() != SeatStatus.AVAILABLE) {
+            throw new RuntimeException("Seat is not available");
+        }
+
+        seat.setStatus(SeatStatus.LOCKED);
+
+        return seatRepository.save(seat);
+    }
+
     public List<Seat> getAllSeats() {
         return seatRepository.findAll();
     }

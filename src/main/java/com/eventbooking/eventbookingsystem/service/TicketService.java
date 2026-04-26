@@ -38,6 +38,11 @@ public class TicketService {
         if(seat.isEmpty()){
             throw new RuntimeException("Seat not found: "+seatId);
         }
+
+        if (seat.get().getStatus() != SeatStatus.LOCKED) {
+            throw new RuntimeException("Seat must be locked before booking");
+        }
+
         seat.get().setStatus(SeatStatus.BOOKED);
         seatRepository.save(seat.get());
 

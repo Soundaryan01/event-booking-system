@@ -36,6 +36,18 @@ public class SeatController {
         );
     }
 
+    @PostMapping("/{seatId}/lock")
+    public APIResponse<SeatDTO> lockSeat(@PathVariable Long seatId) {
+
+        Seat seat = seatService.lockSeat(seatId);
+
+        return new APIResponse<>(
+                true,
+                "Seat locked successfully",
+                EntityMapper.toSeatDTO(seat)
+        );
+    }
+
     @GetMapping("/venue/{venueId}")
     public APIResponse<List<SeatDTO>> getSeatsByVenue(@PathVariable Long venueId) {
 
