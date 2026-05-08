@@ -25,6 +25,6 @@ public class Event {
     private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "venue_id")
+    @JoinColumn(name = "venue_id", nullable = false)
     private Venue venue;
 }

@@ -13,7 +13,7 @@ import java.util.List;
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findByBooking(Booking booking);
 
-    List<Ticket> findByUser(User user);
+    List<Ticket> findByBooking_User(User user);
 
     List<Ticket> findByEvent(Event event);
 }

@@ -18,15 +18,15 @@ public class Ticket {
     private Long ticketId;
 
     @ManyToOne
-    @JoinColumn(name = "booking_id")
+    @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 
     @ManyToOne
-    @JoinColumn(name = "seat_id")
+    @JoinColumn(name = "seat_id", nullable = false)
     private Seat seat;
 
     @ManyToOne
-    @JoinColumn(name = "event_id")
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
     @Enumerated(EnumType.STRING)

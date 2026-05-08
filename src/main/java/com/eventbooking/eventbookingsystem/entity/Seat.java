@@ -18,10 +18,10 @@ public class Seat {
 
     private String seatNumber;
 
-    private String rowNumber;
+    private String seatRow;
 
     @ManyToOne
-    @JoinColumn(name = "venue_id")
+    @JoinColumn(name = "venue_id", nullable = false)
     private Venue venue;
 
     @Enumerated(EnumType.STRING)

@@ -73,7 +73,7 @@ public class TicketService {
 
 
     public List<Ticket> getTicketByUser(User user){
-        return ticketRepository.findByUser(user);
+        return ticketRepository.findByBooking_User(user);
     }
 
     public List<Ticket> getTicketsByBooking(Long bookingId) {

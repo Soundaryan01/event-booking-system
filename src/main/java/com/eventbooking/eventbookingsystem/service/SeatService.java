@@ -93,7 +93,7 @@ public class SeatService {
     }
 
     public List<Seat> getAvailableSeatsByEvent(Long eventId) {
-        return seatRepository.findByEventAndStatus(eventRepository.getById(eventId), SeatStatus.AVAILABLE);
+        return seatRepository.findByVenueAndStatus(eventRepository.getById(eventId).getVenue(), SeatStatus.AVAILABLE);
     }
 
 }

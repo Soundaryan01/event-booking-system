@@ -48,7 +48,7 @@ public class EntityMapper {
         return new SeatDTO(
                 seat.getSeatId(),
                 seat.getSeatNumber(),
-                seat.getRowNumber(),
+                seat.getSeatRow(),
                 seat.getStatus(),
                 seat.getVenue().getVenueId()
         );
